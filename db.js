@@ -8,8 +8,8 @@ const dbPassword = process.env.DB_PASSWORD;
 
 const DB_URI =
     process.env.NODE_ENV === 'test'
-        ? `postgresql://postgres:${dbPassword}@localhost:5432/usersdb_test`
-        : `postgresql://postgres:${dbPassword}@localhost:5432/usersdb`;
+        ? `postgresql://postgres:${dbPassword}@localhost:5432/biztime_test`
+        : `postgresql://postgres:${dbPassword}@localhost:5432/biztime`;
 
 let db = new Client({
     connectionString: DB_URI,
