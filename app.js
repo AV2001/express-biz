@@ -16,11 +16,13 @@ app.use(function (req, res, next) {
 });
 
 /** general error handler */
-app.use((err, req, res, next) => {
-    let status = err.status || 500;
-    let message = err.message;
+app.use((error, req, res, next) => {
+    const status = error.status || 500;
+    const message = error.message || 'Something went wrong';
 
-    return res.json({ error: { message, status } });
+    return res.status(status).json({
+        error: { message, status },
+    });
 });
 
 module.exports = app;
