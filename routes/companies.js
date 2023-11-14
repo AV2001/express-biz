@@ -11,7 +11,10 @@ router.get('/', async (req, res, next) => {
 router.get('/:code', async (req, res, next) => {
     try {
         const { code } = req.params;
-        const results = await db.query(`SELECT * FROM companies WHERE code = $1`, [code]);
+        const results = await db.query(
+            `SELECT * FROM companies WHERE code = $1`,
+            [code]
+        );
         if (results.rows.length === 0) {
             throw new ExpressError(
                 `Can't find a company whose code is ${code}.`,
@@ -19,6 +22,19 @@ router.get('/:code', async (req, res, next) => {
             );
         }
         return res.status(200).json({ company: results.rows[0] });
+    } catch (e) {
+        return next(e);
+    }
+});
+
+router.post('/', async (req, res, next) => {
+    try {
+        const { code, name, description } = req.body;
+        const results = await db.query(
+            `INSERT INTO companies (code, name, description) VALUES ($1, $2, $3) RETURNING *`,
+            [code, name, description]
+        );
+        return res.status(201).json({ company: results.rows[0] });
     } catch (e) {
         return next(e);
     }
