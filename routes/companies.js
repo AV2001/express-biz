@@ -60,4 +60,29 @@ router.put('/:code', async (req, res, next) => {
     }
 });
 
+router.delete('/:code', async (req, res, next) => {
+    try {
+        const { code } = req.params;
+
+        // Check to see if company exists
+        const checkCompany = await db.query(
+            `SELECT * FROM companies WHERE code=$1`,
+            [code]
+        );
+
+        if (checkCompany.rows.length === 0) {
+            throw new ExpressError(
+                `Can't find a company whose code is ${code}.`,
+                404
+            );
+        }
+
+        // If company exists, proceed with the deletion
+        await db.query(`DELETE FROM companies WHERE code=$1`, [code]);
+        return res.status(200).json({ status: 'deleted' });
+    } catch (e) {
+        return next(e);
+    }
+});
+
 module.exports = router;
