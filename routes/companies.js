@@ -24,7 +24,7 @@ router.get('/:code', async (req, res, next) => {
         const { code, name, description, invoices } = results.rows[0];
         return res
             .status(200)
-            .json({ company: {code, name, description, invoices }});
+            .json({ company: { code, name, description, invoices } });
     } catch (e) {
         return next(e);
     }
