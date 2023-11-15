@@ -8,4 +8,41 @@ router.get('/', async (req, res, next) => {
     return res.status(200).json({ invoices: results.rows });
 });
 
+router.get('/:id', async (req, res, next) => {
+    try {
+        const { id: invoiceId } = req.params;
+        const invoiceData = await db.query(
+            `SELECT i.id, i.amt, i.paid, i.add_date, i.paid_date, c.code, c.name, c.description FROM invoices i JOIN companies c ON i.comp_code = c.code WHERE id=$1`,
+            [invoiceId]
+        );
+        if (invoiceData.rows.length === 0) {
+            throw new ExpressError(
+                `Can't find the invoice with id ${invoiceId}.`,
+                404
+            );
+        }
+
+        const { id, amt, paid, add_date, paid_date, code, name, description } =
+            invoiceData.rows[0];
+
+        const response = {
+            invoice: {
+                id,
+                amt,
+                paid,
+                add_date,
+                paid_date,
+                company: {
+                    code,
+                    name,
+                    description,
+                },
+            },
+        };
+        return res.status(200).json(response);
+    } catch (e) {
+        return next(e);
+    }
+});
+
 module.exports = router;
