@@ -54,11 +54,33 @@ router.post('/', async (req, res, next) => {
         );
         const { id, comp_code, amt, paid, add_date, paid_date } =
             invoiceData.rows[0];
+        return res.status(201).json({
+            invoice: { id, comp_code, amt, paid, add_date, paid_date },
+        });
+    } catch (e) {
+        return next(e);
+    }
+});
+
+router.put('/:id', async (req, res, next) => {
+    try {
+        const { id: invoiceId } = req.params;
+        const { amt: invoiceAmt } = req.body;
+        const invoiceData = await db.query(
+            `UPDATE invoices SET amt=$1 WHERE id=$2 RETURNING *`,
+            [invoiceAmt, invoiceId]
+        );
+        if (invoiceData.rows.length === 0) {
+            throw new ExpressError(
+                `Can't find the invoice with id ${invoiceId}.`,
+                404
+            );
+        }
+        const { id, comp_code, amt, paid, add_date, paid_date } =
+            invoiceData.rows[0];
         return res
-            .status(201)
-            .json({
-                invoice: { id, comp_code, amt, paid, add_date, paid_date },
-            });
+            .status(200)
+            .json({ invoice: id, comp_code, amt, paid, add_date, paid_date });
     } catch (e) {
         return next(e);
     }
