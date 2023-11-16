@@ -90,3 +90,18 @@ describe('PUT /companies/:code', () => {
         expect(response.statusCode).toBe(404);
     });
 });
+
+describe('DELETE /companies/:code', () => {
+    test('Delete a company', async () => {
+        const response = await request(app).delete(
+            `/companies/${testCompany.code}`
+        );
+        expect(response.statusCode).toBe(200);
+        expect(response.body).toEqual({ status: 'deleted' });
+    });
+
+    test('Return 404 if invalid code is passed', async () => {
+        const response = await request(app).delete('/companies/microsoft');
+        expect(response.statusCode).toBe(404);
+    });
+});
