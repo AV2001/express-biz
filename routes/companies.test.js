@@ -35,7 +35,7 @@ describe('GET /companies', () => {
     });
 });
 
-describe('GET /companies/:id', () => {
+describe('GET /companies/:code', () => {
     test('Get company by code', async () => {
         const response = await request(app).get(
             `/companies/${testCompany.code}`
@@ -67,5 +67,26 @@ describe('POST /companies', () => {
         const response = await request(app).post('/companies').send(newCompany);
         expect(response.statusCode).toBe(201);
         expect(response.body).toEqual({ company: newCompany });
+    });
+});
+
+describe('PUT /companies/:code', () => {
+    test('Update a company', async () => {
+        const newCompany = {
+            code: 'openai',
+            name: 'OpenAI',
+            description: 'GPT 5 is coming soon!',
+        };
+        const response = await request(app)
+            .put(`/companies/${testCompany.code}`)
+            .send(newCompany);
+        expect(response.statusCode).toBe(200);
+        console.log(response.body);
+        expect(response.body).toEqual({ company: newCompany });
+    });
+
+    test('Return 404 if invalid code is passed', async () => {
+        const response = await request(app).put('/companies/microsoft');
+        expect(response.statusCode).toBe(404);
     });
 });
