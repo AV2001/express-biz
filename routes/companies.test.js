@@ -56,3 +56,16 @@ describe('GET /companies/:id', () => {
         expect(response.statusCode).toBe(404);
     });
 });
+
+describe('POST /companies', () => {
+    test('Create a company', async () => {
+        const newCompany = {
+            code: 'google',
+            name: 'Google',
+            description: 'The best we could is Gemini.',
+        };
+        const response = await request(app).post('/companies').send(newCompany);
+        expect(response.statusCode).toBe(201);
+        expect(response.body).toEqual({ company: newCompany });
+    });
+});
