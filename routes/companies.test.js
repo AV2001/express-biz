@@ -82,7 +82,6 @@ describe('PUT /companies/:code', () => {
             .put(`/companies/${testCompany.code}`)
             .send(newCompany);
         expect(response.statusCode).toBe(200);
-        console.log(response.body);
         expect(response.body).toEqual({ company: newCompany });
     });
 
