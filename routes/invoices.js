@@ -80,7 +80,9 @@ router.put('/:id', async (req, res, next) => {
             invoiceData.rows[0];
         return res
             .status(200)
-            .json({ invoice: id, comp_code, amt, paid, add_date, paid_date });
+            .json({
+                invoice: { id, comp_code, amt, paid, add_date, paid_date },
+            });
     } catch (e) {
         return next(e);
     }
