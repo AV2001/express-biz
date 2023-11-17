@@ -80,3 +80,28 @@ describe('POST /invoices', () => {
         });
     });
 });
+
+describe('PUT /invoices/:id', () => {
+    test('Update an invoice', async () => {
+        const newInvoice = { amt: 3000 };
+        const response = await request(app)
+            .put(`/invoices/${testInvoice.id}`)
+            .send(newInvoice);
+        expect(response.statusCode).toBe(200);
+        expect(response.body).toEqual({
+            invoice: {
+                id: expect.any(Number),
+                comp_code: testInvoice.comp_code,
+                amt: newInvoice.amt,
+                paid: testInvoice.paid,
+                add_date: testInvoice.add_date.toISOString(),
+                paid_date: testInvoice.paid_date,
+            },
+        });
+    });
+
+    test('Return 404 if invalid id is passed', async () => {
+        const response = await request(app).put('/invoices/100');
+        expect(response.statusCode).toBe(404);
+    });
+});
