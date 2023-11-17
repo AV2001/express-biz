@@ -62,3 +62,21 @@ describe('GET /invoices/:id', () => {
         expect(response.statusCode).toBe(404);
     });
 });
+
+describe('POST /invoices', () => {
+    test('Create an invoice', async () => {
+        const newInvoice = { comp_code: 'openai', amt: 3000 };
+        const response = await request(app).post('/invoices').send(newInvoice);
+        expect(response.statusCode).toBe(201);
+        expect(response.body).toEqual({
+            invoice: {
+                id: expect.any(Number),
+                comp_code: newInvoice.comp_code,
+                amt: newInvoice.amt,
+                paid: expect.any(Boolean),
+                add_date: '2023-12-12T20:00:00.000Z',
+                paid_date: null,
+            },
+        });
+    });
+});
