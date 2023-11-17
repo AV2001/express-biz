@@ -37,3 +37,28 @@ describe('GET /invoices', () => {
         });
     });
 });
+
+describe('GET /invoices/:id', () => {
+    test('Get an invoice', async () => {
+        const response = await request(app).get(`/invoices/${testInvoice.id}`);
+        expect(response.statusCode).toBe(200);
+        let { id, amt, paid, add_date, paid_date } = testInvoice;
+        const { code, name, description } = testCompany;
+        add_date = add_date.toISOString();
+        expect(response.body).toEqual({
+            invoice: {
+                id,
+                amt,
+                paid,
+                add_date,
+                paid_date,
+                company: { code, name, description },
+            },
+        });
+    });
+
+    test('Return 404 if invalid id is passed', async () => {
+        const response = await request(app).get('/invoices/100');
+        expect(response.statusCode).toBe(404);
+    });
+});
