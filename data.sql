@@ -24,7 +24,7 @@ CREATE TABLE
     );
 
 CREATE TABLE
-    industries (code text PRIMARY KEY, industry text);
+    industries (code text PRIMARY KEY, industry text NOT NULL UNIQUE);
 
 CREATE TABLE
     companies_industries (
