@@ -13,19 +13,36 @@ router.get('/:code', async (req, res, next) => {
     try {
         const { code: companyCode } = req.params;
         const results = await db.query(
-            `SELECT c.code, c.name, c.description, ARRAY_AGG(i.id) AS invoices FROM companies c JOIN invoices i ON c.code = i.comp_code WHERE code=$1 GROUP BY c.code`,
+            `SELECT c.code, c.name, c.description, inv.id as invoice_id, ind.name as industry_name
+             FROM companies c
+             LEFT JOIN invoices inv ON inv.comp_code = c.code
+             LEFT JOIN companies_industries ci ON ci.company_code = c.code
+             LEFT JOIN industries ind ON ind.code = ci.industry_code
+             WHERE c.code = $1`,
             [companyCode]
         );
+
         if (results.rows.length === 0) {
             throw new ExpressError(
                 `Can't find a company whose code is ${companyCode}.`,
                 404
             );
         }
-        const { code, name, description, invoices } = results.rows[0];
-        return res
-            .status(200)
-            .json({ company: { code, name, description, invoices } });
+
+        const { code, name, description } = results.rows[0];
+        const invoices = results.rows
+            .map((row) => row.invoice_id)
+            .filter((value, index, self) => self.indexOf(value) === index);
+        const industries = results.rows
+            .map((row) => row.industry_name)
+            .filter(
+                (value, index, self) =>
+                    self.indexOf(value) === index && value !== null
+            );
+
+        return res.status(200).json({
+            company: { code, name, description, invoices, industries },
+        });
     } catch (e) {
         return next(e);
     }
