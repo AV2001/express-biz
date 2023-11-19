@@ -24,7 +24,7 @@ CREATE TABLE
     );
 
 CREATE TABLE
-    industries (code text PRIMARY KEY, industry text NOT NULL UNIQUE);
+    industries (code text PRIMARY KEY, name text NOT NULL UNIQUE);
 
 CREATE TABLE
     companies_industries (
@@ -48,7 +48,7 @@ VALUES
     ('ibm', 400, false, null);
 
 INSERT INTO
-    industries (code, industry)
+    industries (code, name)
 VALUES
     ('acct', 'Accounting'),
     ('mark', 'Marketing');
